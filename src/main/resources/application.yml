@@ -1,0 +1,79 @@
+server:
+  port: 8091
+  servlet:
+    context-path: /lake_side_hotel
+    multipart:
+      max-file-size: 10000KB
+      max-request-size: 10000KB
+      enabled: true
+    session:
+      timeout: 240m # Definicao de sessao de login onde o usuario tem um tempo determinado para estar logado
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-request: true
+      force-response: true
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript/application/javascript,application/json
+    min-response-size: 1024
+  http2:
+    enabled: true
+  tomcat:
+    max-connections: 50000
+    min-spare-threads: 1000
+
+spring:
+  profiles:
+    active: dev
+  config:
+    import: 'optional:secrets.properties'
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      connection-timeout: 20000 # Numero maximo de milissegundos que um cliente aguardara por conexao
+      minimum-idle: 200 # Numero minimo de conexoes inativas mantidas pelo HikariCP em um conjunto de conexoes
+      maximum-pool-size: 550 # Maximo do pool de conexoes
+      idle-timeout: 10000 # Tempo ocioso para conexao
+      pool-name: PoolHikari
+      auto-commit: false # Salvando dados no BD automaticamente
+    dbcp2:
+      pool-prepared-statements: true # Processos/execucoees dentro do database
+      max-open-prepared-statements: 550 # Portas abertas para processos/sessoes dentro de conexoes e de execucao de SQL dentro do databsse
+  platform: postgres
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp:
+          use_jdbc_metadata_defaults: true
+        jdbc:
+          batch-size: 4
+          lob:
+            non-contextual-creation: true
+        order_inserts: true
+        order_updates: true
+  transaction:
+    rollback-on-commit-failure: true
+  session:
+    jdbc:
+      cleanup-cron: 0 0 4 * * *
+  mvc:
+    static-path-pattern: /resources/static/** # Spring security habilita acesso a arquivos de imagens
+
+#Token expiration
+token:
+  expiration:
+    length:
+      minutes: 120
+
+authuser:
+  refreshscope:
+    name: Ederson de Jesus Santos!!!!!
+  client:
+    url: localhost:8091/lake_side_app
